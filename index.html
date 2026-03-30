@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAWADA — Import & Distribution Tokyo</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #c8102e;
+  --navy: #0a0a1a;
+  --dark: #111122;
+  --gold: #d4a843;
+  --white: #f5f3ef;
+  --grey: #888;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--navy);
+  color: var(--white);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── CURSOR ── */
+.cursor {
+  position: fixed;
+  width: 12px; height: 12px;
+  background: var(--red);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s, width 0.3s, height 0.3s, opacity 0.3s;
+  mix-blend-mode: difference;
+}
+.cursor-ring {
+  position: fixed;
+  width: 40px; height: 40px;
+  border: 1px solid rgba(200,16,46,0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: transform 0.15s ease-out, width 0.3s, height 0.3s;
+}
+
+/* ── LOADER ── */
+#loader {
+  position: fixed;
+  inset: 0;
+  background: var(--navy);
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.8s ease, visibility 0.8s;
+}
+#loader.hidden { opacity: 0; visibility: hidden; }
+
+.loader-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 80px;
+  letter-spacing: 20px;
+  color: var(--white);
+  opacity: 0;
+  animation: loaderFade 0.6s ease 0.3s forwards;
+}
+.loader-jp {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 20px;
+  color: var(--red);
+  letter-spacing: 8px;
+  margin-top: 8px;
+  opacity: 0;
+  animation: loaderFade 0.6s ease 0.6s forwards;
+}
+.loader-bar-wrap {
+  width: 200px;
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+  margin-top: 40px;
+  overflow: hidden;
+}
+.loader-bar {
+  height: 100%;
+  background: var(--red);
+  width: 0%;
+  animation: loadBar 1.4s ease 0.5s forwards;
+}
+.loader-pct {
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--grey);
+  margin-top: 12px;
+  opacity: 0;
+  animation: loaderFade 0.4s ease 0.6s forwards;
+}
+
+@keyframes loaderFade { to { opacity: 1; } }
+@keyframes loadBar { to { width: 100%; } }
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 20px 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.4s, padding 0.4s;
+}
+nav.scrolled {
+  background: rgba(10,10,26,0.95);
+  backdrop-filter: blur(20px);
+  padding: 14px 60px;
+  border-bottom: 1px solid rgba(200,16,46,0.2);
+}
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 6px;
+  color: var(--white);
+  text-decoration: none;
+}
+.nav-logo span { color: var(--red); }
+.nav-links { display: flex; gap: 40px; list-style: none; }
+.nav-links a {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(245,243,239,0.6);
+  text-decoration: none;
+  transition: color 0.3s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 1px;
+  background: var(--red);
+  transition: width 0.3s;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-links a:hover::after { width: 100%; }
+
+/* ── HERO ── */
+#hero {
+  height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(200,16,46,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 80% 20%, rgba(212,168,67,0.06) 0%, transparent 60%),
+    linear-gradient(180deg, #0a0a1a 0%, #050510 100%);
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(200,16,46,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,16,46,0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  animation: gridMove 20s linear infinite;
+}
+@keyframes gridMove {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(80px); }
+}
+
+.hero-jp-bg {
+  position: absolute;
+  font-family: 'Noto Serif JP', serif;
+  font-size: 320px;
+  font-weight: 700;
+  color: rgba(200,16,46,0.04);
+  letter-spacing: -20px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: floatSlow 8s ease-in-out infinite alternate;
+}
+@keyframes floatSlow {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  100% { transform: translate(-50%, -52%) scale(1.02); }
+}
+
+.hero-content {
+  position: relative;
+  text-align: center;
+  z-index: 2;
+}
+
+.hero-tag {
+  font-size: 10px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: slideUp 0.8s ease 2s forwards;
+}
+
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(80px, 12vw, 160px);
+  line-height: 0.9;
+  letter-spacing: 10px;
+  color: var(--white);
+  opacity: 0;
+  animation: slideUp 0.8s ease 2.2s forwards;
+}
+
+.hero-title .line-red { color: var(--red); display: block; }
+.hero-title .line-outline {
+  -webkit-text-stroke: 1px rgba(245,243,239,0.3);
+  color: transparent;
+  display: block;
+}
+
+.hero-sub {
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: rgba(245,243,239,0.4);
+  text-transform: uppercase;
+  margin-top: 32px;
+  opacity: 0;
+  animation: slideUp 0.8s ease 2.4s forwards;
+}
+
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 56px;
+  padding: 16px 40px;
+  border: 1px solid var(--red);
+  color: var(--white);
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: slideUp 0.8s ease 2.6s forwards;
+  transition: background 0.3s, color 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.hero-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--red);
+  transform: translateX(-100%);
+  transition: transform 0.4s ease;
+  z-index: -1;
+}
+.hero-cta:hover::before { transform: translateX(0); }
+.hero-cta:hover { border-color: var(--red); }
+
+.hero-arrow {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  opacity: 0;
+  animation: slideUp 0.8s ease 3s forwards;
+}
+.hero-arrow span {
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--grey);
+}
+.arrow-line {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(var(--red), transparent);
+  animation: arrowPulse 2s ease-in-out infinite;
+}
+@keyframes arrowPulse {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(1.1); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── MARQUEE ── */
+.marquee-section {
+  padding: 0;
+  border-top: 1px solid rgba(200,16,46,0.2);
+  border-bottom: 1px solid rgba(200,16,46,0.2);
+  background: rgba(200,16,46,0.05);
+  overflow: hidden;
+}
+.marquee-track {
+  display: flex;
+  white-space: nowrap;
+  animation: marqueeMove 20s linear infinite;
+}
+.marquee-item {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding: 16px 40px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  letter-spacing: 4px;
+  color: rgba(245,243,239,0.3);
+  flex-shrink: 0;
+}
+.marquee-item .dot {
+  width: 4px; height: 4px;
+  background: var(--red);
+  border-radius: 50%;
+}
+@keyframes marqueeMove {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── SECTIONS ── */
+section { padding: 120px 60px; }
+
+.section-tag {
+  font-size: 10px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-tag::before {
+  content: '';
+  width: 30px; height: 1px;
+  background: var(--red);
+}
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(48px, 6vw, 80px);
+  line-height: 1;
+  letter-spacing: 4px;
+  color: var(--white);
+  margin-bottom: 60px;
+}
+
+.section-title .outline {
+  -webkit-text-stroke: 1px rgba(245,243,239,0.2);
+  color: transparent;
+}
+
+/* ── ABOUT ── */
+#about {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.about-left .about-text {
+  font-size: 16px;
+  line-height: 1.9;
+  color: rgba(245,243,239,0.65);
+  margin-bottom: 32px;
+}
+
+.about-left .about-text strong {
+  color: var(--white);
+  font-weight: 600;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: rgba(200,16,46,0.2);
+  border: 1px solid rgba(200,16,46,0.2);
+  margin-top: 48px;
+}
+
+.stat-cell {
+  background: var(--dark);
+  padding: 28px 24px;
+  transition: background 0.3s;
+}
+.stat-cell:hover { background: rgba(200,16,46,0.08); }
+
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px;
+  letter-spacing: 2px;
+  color: var(--red);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--grey);
+  margin-top: 6px;
+}
+
+.about-right {
+  position: relative;
+}
+
+.about-visual {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: linear-gradient(135deg, rgba(200,16,46,0.15), rgba(10,10,26,0.8));
+  border: 1px solid rgba(200,16,46,0.3);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-visual-jp {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 120px;
+  font-weight: 700;
+  color: rgba(200,16,46,0.15);
+  line-height: 1;
+  text-align: center;
+}
+
+.about-visual::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 4px;
+  background: linear-gradient(90deg, var(--red), var(--gold));
+}
+
+.about-visual-badge {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  right: 24px;
+  background: rgba(10,10,26,0.9);
+  border: 1px solid rgba(200,16,46,0.3);
+  padding: 16px 20px;
+  backdrop-filter: blur(10px);
+}
+.badge-title {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 6px;
+}
+.badge-text {
+  font-size: 12px;
+  color: rgba(245,243,239,0.8);
+  line-height: 1.6;
+}
+
+/* ── PARTNERS ── */
+#partners {
+  background: var(--dark);
+  border-top: 1px solid rgba(200,16,46,0.15);
+  border-bottom: 1px solid rgba(200,16,46,0.15);
+}
+
+.partners-inner { max-width: 1400px; margin: 0 auto; }
+
+.partners-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: rgba(200,16,46,0.15);
+  border: 1px solid rgba(200,16,46,0.15);
+  margin-top: 0;
+}
+
+.partner-card {
+  background: var(--dark);
+  padding: 48px 32px;
+  text-align: center;
+  transition: background 0.4s, transform 0.4s;
+  position: relative;
+  overflow: hidden;
+}
+
+.partner-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--red);
+  transform: scaleX(0);
+  transition: transform 0.4s;
+}
+
+.partner-card:hover {
+  background: rgba(200,16,46,0.06);
+  transform: translateY(-4px);
+}
+.partner-card:hover::before { transform: scaleX(1); }
+
+.partner-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  letter-spacing: 4px;
+  color: rgba(245,243,239,0.4);
+  transition: color 0.4s;
+  margin-bottom: 8px;
+}
+.partner-card:hover .partner-name { color: var(--white); }
+
+.partner-type {
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--red);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.partner-card:hover .partner-type { opacity: 1; transform: translateY(0); }
+
+/* ── TEAM ── */
+#team { max-width: 1400px; margin: 0 auto; }
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: rgba(200,16,46,0.15);
+  border: 1px solid rgba(200,16,46,0.15);
+}
+
+.team-card {
+  background: var(--dark);
+  padding: 32px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.4s;
+}
+
+.team-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--red), var(--gold));
+  transform: scaleX(0);
+  transition: transform 0.4s;
+}
+.team-card:hover::after { transform: scaleX(1); }
+.team-card:hover { background: rgba(200,16,46,0.05); }
+
+.team-avatar {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  background: rgba(200,16,46,0.15);
+  border: 1px solid rgba(200,16,46,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  color: var(--red);
+  letter-spacing: 1px;
+}
+
+.team-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.team-role {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 10px;
+}
+
+.team-desc {
+  font-size: 10px;
+  color: rgba(245,243,239,0.4);
+  line-height: 1.6;
+}
+
+/* ── PLAYMOBIL CTA ── */
+#playmobil {
+  background: linear-gradient(135deg, rgba(200,16,46,0.08), rgba(10,10,26,0.9));
+  border-top: 1px solid rgba(200,16,46,0.2);
+  border-bottom: 1px solid rgba(200,16,46,0.2);
+  text-align: center;
+  padding: 120px 60px;
+}
+
+.play-eyebrow {
+  font-size: 10px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 24px;
+}
+
+.play-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(60px, 8vw, 110px);
+  letter-spacing: 8px;
+  line-height: 1;
+  color: var(--white);
+  margin-bottom: 24px;
+}
+
+.play-title span { color: var(--red); }
+
+.play-text {
+  max-width: 700px;
+  margin: 0 auto 48px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: rgba(245,243,239,0.55);
+}
+
+.play-text strong { color: var(--white); }
+
+.play-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 56px;
+  background: var(--red);
+  color: var(--white);
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  font-weight: 600;
+  transition: background 0.3s, transform 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.play-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.1);
+  transform: translateX(-100%) skewX(-10deg);
+  transition: transform 0.4s;
+}
+.play-cta:hover::before { transform: translateX(100%) skewX(-10deg); }
+.play-cta:hover { background: #a00020; transform: translateY(-2px); }
+
+/* ── CONTACT ── */
+#contact {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(200,16,46,0.15);
+  border: 1px solid rgba(200,16,46,0.15);
+  margin-top: 60px;
+}
+
+.contact-cell {
+  background: var(--dark);
+  padding: 40px 32px;
+  transition: background 0.3s;
+}
+.contact-cell:hover { background: rgba(200,16,46,0.06); }
+
+.contact-icon {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+.contact-label {
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 8px;
+}
+.contact-value {
+  font-size: 13px;
+  color: var(--white);
+  font-weight: 500;
+}
+.contact-sub {
+  font-size: 10px;
+  color: var(--grey);
+  margin-top: 4px;
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid rgba(200,16,46,0.2);
+  padding: 32px 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 6px;
+  color: var(--white);
+}
+.footer-logo span { color: var(--red); }
+
+.footer-copy {
+  font-size: 10px;
+  color: var(--grey);
+  letter-spacing: 2px;
+}
+
+.footer-jp {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 14px;
+  color: rgba(200,16,46,0.4);
+}
+
+/* ── SCROLL REVEAL ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+/* ── NOISE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.4;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  nav { padding: 16px 24px; }
+  section { padding: 80px 24px; }
+  #about { grid-template-columns: 1fr; gap: 48px; }
+  .about-right { display: none; }
+  .partners-grid { grid-template-columns: repeat(2, 1fr); }
+  .team-grid { grid-template-columns: repeat(2, 1fr); }
+  .contact-grid { grid-template-columns: 1fr; }
+  footer { flex-direction: column; gap: 16px; text-align: center; }
+  .nav-links { display: none; }
+  .hero-title { font-size: 60px; }
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">KAWADA</div>
+  <div class="loader-jp">川田輸入</div>
+  <div class="loader-bar-wrap">
+    <div class="loader-bar"></div>
+  </div>
+  <div class="loader-pct">CHARGEMENT EN COURS</div>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">KA<span>W</span>ADA</a>
+  <ul class="nav-links">
+    <li><a href="#about">À propos</a></li>
+    <li><a href="#partners">Partenaires</a></li>
+    <li><a href="#team">Équipe</a></li>
+    <li><a href="#playmobil">Collaboration</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-jp-bg">川田</div>
+
+  <div class="hero-content">
+    <div class="hero-tag">Tokyo · Japon · Import & Distribution · Depuis 2010</div>
+    <h1 class="hero-title">
+      <span class="line-red">KAWADA</span>
+      <span>IMPORT</span>
+      <span class="line-outline">TOKYO</span>
+    </h1>
+    <p class="hero-sub">Spécialiste de l'importation de jouets premium au Japon</p>
+    <a href="#about" class="hero-cta">Découvrir KAWADA →</a>
+  </div>
+
+  <div class="hero-arrow">
+    <div class="arrow-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <div class="marquee-item">KAWADA IMPORT <span class="dot"></span></div>
+    <div class="marquee-item">TOKYO DISTRIBUTION <span class="dot"></span></div>
+    <div class="marquee-item">LEGO PARTNER <span class="dot"></span></div>
+    <div class="marquee-item">HASBRO PARTNER <span class="dot"></span></div>
+    <div class="marquee-item">MATTEL PARTNER <span class="dot"></span></div>
+    <div class="marquee-item">QUALITÉ PREMIUM <span class="dot"></span></div>
+    <div class="marquee-item">MARCHÉ JAPONAIS <span class="dot"></span></div>
+    <div class="marquee-item">川田輸入株式会社 <span class="dot"></span></div>
+    <!-- repeat for seamless loop -->
+    <div class="marquee-item">KAWADA IMPORT <span class="dot"></span></div>
+    <div class="marquee-item">TOKYO DISTRIBUTION <span class="dot"></span></div>
+    <div class="marquee-item">LEGO PARTNER <span class="dot"></span></div>
+    <div class="marquee-item">HASBRO PARTNER <span class="dot"></span></div>
+    <div class="marquee-item">MATTEL PARTNER <span class="dot"></span></div>
+    <div class="marquee-item">QUALITÉ PREMIUM <span class="dot"></span></div>
+    <div class="marquee-item">MARCHÉ JAPONAIS <span class="dot"></span></div>
+    <div class="marquee-item">川田輸入株式会社 <span class="dot"></span></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="reveal-left">
+    <div class="section-tag">À propos de nous</div>
+    <h2 class="section-title">L'EXCELLENCE<br><span class="outline">AU CŒUR DE</span><br>TOKYO</h2>
+    <p class="about-text">
+      Basée au cœur de <strong>Tokyo</strong>, KAWADA Import est spécialisée dans l'importation et la distribution de jouets de qualité sur le marché japonais. Nous travaillons avec les <strong>plus grandes marques mondiales</strong> — LEGO, HASBRO, MATTEL — et mettons notre expertise locale au service de leur développement.
+    </p>
+    <p class="about-text">
+      Notre réputation repose sur une <strong>rigueur opérationnelle</strong> sans compromis, une connaissance approfondie des spécificités réglementaires japonaises et une capacité à créer des <strong>partenariats durables</strong> fondés sur la confiance mutuelle.
+    </p>
+
+    <div class="stats-grid">
+      <div class="stat-cell">
+        <div class="stat-num">15+</div>
+        <div class="stat-label">Années d'expérience</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">50+</div>
+        <div class="stat-label">Marques distribuées</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">3</div>
+        <div class="stat-label">Entrepôts au Japon</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">12</div>
+        <div class="stat-label">Étapes qualité</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="about-right reveal-right">
+    <div class="about-visual">
+      <div class="about-visual-jp">川<br>田</div>
+      <div class="about-visual-badge">
+        <div class="badge-title">Notre mission</div>
+        <div class="badge-text">Connecter les meilleures marques mondiales aux consommateurs japonais avec excellence et précision.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNERS -->
+<section id="partners">
+  <div class="partners-inner">
+    <div class="reveal" style="text-align:center; margin-bottom: 60px;">
+      <div class="section-tag" style="justify-content:center;">Nos partenaires</div>
+      <h2 class="section-title" style="text-align:center;">NOS MARQUES<br><span class="outline">DE RÉFÉRENCE</span></h2>
+    </div>
+    <div class="partners-grid reveal">
+      <div class="partner-card">
+        <div class="partner-name">LEGO</div>
+        <div class="partner-type">Jeux de construction · Danemark</div>
+      </div>
+      <div class="partner-card">
+        <div class="partner-name">HASBRO</div>
+        <div class="partner-type">Jeux & Jouets · États-Unis</div>
+      </div>
+      <div class="partner-card">
+        <div class="partner-name">MATTEL</div>
+        <div class="partner-type">Jeux & Jouets · États-Unis</div>
+      </div>
+      <div class="partner-card" style="border: 1px solid rgba(200,16,46,0.4);">
+        <div class="partner-name" style="color: var(--red);">PLAYMOBIL</div>
+        <div class="partner-type" style="opacity:1;">Nouveau partenaire · Allemagne</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section>
+  <div id="team">
+    <div class="reveal" style="text-align:center; margin-bottom: 60px;">
+      <div class="section-tag" style="justify-content:center;">Notre équipe</div>
+      <h2 class="section-title" style="text-align:center;">LES HOMMES<br><span class="outline">& FEMMES</span></h2>
+    </div>
+    <div class="team-grid reveal">
+      <div class="team-card">
+        <div class="team-avatar">AC</div>
+        <div class="team-name">Alfred Chambonnière</div>
+        <div class="team-role">Directeur Général</div>
+        <div class="team-desc">Vision stratégique et développement des partenariats internationaux</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">TC</div>
+        <div class="team-name">Tristan Cotellon</div>
+        <div class="team-role">Responsable Achats</div>
+        <div class="team-desc">Négociation fournisseurs et sélection des références produits</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">MB</div>
+        <div class="team-name">Marie-Amélie Brebion</div>
+        <div class="team-role">Responsable Commercial</div>
+        <div class="team-desc">Stratégie de vente et développement du réseau de distribution japonais</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">AP</div>
+        <div class="team-name">Athina Palus</div>
+        <div class="team-role">Responsable Financier</div>
+        <div class="team-desc">Gestion des flux financiers et couverture du risque de change</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">SG</div>
+        <div class="team-name">Samuel Goli Natchia</div>
+        <div class="team-role">Responsable Supply Chain</div>
+        <div class="team-desc">Optimisation logistique et gestion des flux d'importation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLAYMOBIL CTA -->
+<section id="playmobil">
+  <div class="play-eyebrow reveal">Nouvelle collaboration envisagée</div>
+  <h2 class="play-title reveal">BIENVENUE<br><span>PLAYMOBIL</span></h2>
+  <p class="play-text reveal">
+    Chez KAWADA, nous sommes convaincus que <strong>Playmobil représente une opportunité unique</strong> sur le marché japonais. Votre univers narratif riche, votre qualité européenne reconnue et votre positionnement premium correspondent parfaitement aux attentes de nos consommateurs. Nous avons structuré <strong>12 étapes clés</strong> pour vous démontrer notre sérieux et notre capacité à valoriser votre marque au Japon.
+  </p>
+  <a href="#contact" class="play-cta reveal">Démarrer la collaboration →</a>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="reveal">
+    <div class="section-tag" style="justify-content:center;">Nous contacter</div>
+    <h2 class="section-title" style="text-align:center;">TRAVAILLONS<br><span class="outline">ENSEMBLE</span></h2>
+  </div>
+  <div class="contact-grid reveal">
+    <div class="contact-cell">
+      <div class="contact-icon">📍</div>
+      <div class="contact-label">Adresse</div>
+      <div class="contact-value">2-14-5 Shinjuku</div>
+      <div class="contact-sub">Shinjuku-ku, Tokyo 160-0022 — Japon</div>
+    </div>
+    <div class="contact-cell">
+      <div class="contact-icon">✉️</div>
+      <div class="contact-label">Email</div>
+      <div class="contact-value">contact@kawada-import.co.jp</div>
+      <div class="contact-sub">Réponse sous 24h ouvrées</div>
+    </div>
+    <div class="contact-cell">
+      <div class="contact-icon">📞</div>
+      <div class="contact-label">Téléphone</div>
+      <div class="contact-value">+81 3 5555 8800</div>
+      <div class="contact-sub">Lun–Ven · 9h–18h JST</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">KA<span>W</span>ADA</div>
+  <div class="footer-copy">© 2026 KAWADA Import Co., Ltd. — Tokyo, Japon</div>
+  <div class="footer-jp">川田輸入株式会社</div>
+</footer>
+
+<script>
+// ── LOADER ──
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+  }, 2000);
+});
+
+// ── CURSOR ──
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top = my + 'px';
+});
+
+function animateRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top = ry + 'px';
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.width = '20px';
+    cursor.style.height = '20px';
+    ring.style.width = '60px';
+    ring.style.height = '60px';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.width = '12px';
+    cursor.style.height = '12px';
+    ring.style.width = '40px';
+    ring.style.height = '40px';
+  });
+});
+
+// ── NAVBAR SCROLL ──
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ── SCROLL REVEAL ──
+const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.classList.add('visible');
+      }, i * 80);
+    }
+  });
+}, { threshold: 0.1 });
+
+reveals.forEach(el => observer.observe(el));
+
+// ── COUNTER ANIMATION ──
+function animateCounter(el, target, duration = 1500) {
+  let start = 0;
+  const step = target / (duration / 16);
+  const timer = setInterval(() => {
+    start += step;
+    if (start >= target) { el.textContent = target + (el.dataset.suffix || ''); clearInterval(timer); }
+    else { el.textContent = Math.floor(start) + (el.dataset.suffix || ''); }
+  }, 16);
+}
+
+const statObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.stat-num').forEach(num => {
+        const val = parseInt(num.textContent);
+        const suffix = num.textContent.replace(/[0-9]/g, '');
+        num.dataset.suffix = suffix;
+        animateCounter(num, val);
+      });
+      statObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.stats-grid').forEach(el => statObserver.observe(el));
+</script>
+</body>
+</html>
